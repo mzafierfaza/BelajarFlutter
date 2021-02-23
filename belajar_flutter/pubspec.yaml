@@ -48,6 +48,8 @@ flutter:
   assets:
     - images/marleyan.jpg
     - images/pattern_aot.jpg
+    - images/cofee
+    - images/mikasa
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
