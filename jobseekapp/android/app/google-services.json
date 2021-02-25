@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "663641436157",
+    "project_id": "jobseekapptool",
+    "storage_bucket": "jobseekapptool.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:663641436157:android:01a912f77b88813963f394",
+        "android_client_info": {
+          "package_name": "com.example.jobseekapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "663641436157-rp7e2ofuq5gdtdohu1jequoqh23fu4ap.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD2vgWZwXB46RFJgLoOAjb_mENnBy62p1c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "663641436157-rp7e2ofuq5gdtdohu1jequoqh23fu4ap.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
