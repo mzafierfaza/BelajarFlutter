@@ -3,12 +3,15 @@
 import 'dart:typed_data';
 
 import 'package:bloc/bloc.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:jobseekapp/auth_services.dart';
+import 'package:jobseekapp/card_page.dart';
 
 import 'business_logic.dart';
 import 'home_model.dart';
@@ -19,12 +22,12 @@ void main() async {
   Bloc.observer = SimpleBlockObserver();
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  await AuthServices.signInAnonymous();
+
   runApp(MyApp());
 }
 
 class MyApp extends StatefulWidget {
-  MyApp({Key key}) : super(key: key);
-
   @override
   _MyAppState createState() => _MyAppState();
 }
@@ -32,11 +35,17 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   Widget makeImagesGrid() {
     return GridView.builder(
-        itemCount: 12,
+        itemCount: 15,
         gridDelegate:
-            SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+            SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 1),
         itemBuilder: (context, index) {
-          return ImageGridItem(index);
+          return GestureDetector(
+              child: ImageGridItem(index + 1),
+              onTap: () {
+                Navigator.of(context).push(MaterialPageRoute(
+                    //DIMANA TUJUANNYA ADALAH SECONDAPAGE DAN MENGIRIMKAN DATA YANG DIMINTA
+                    builder: (context) => CardPage()));
+              });
         });
   }
 
@@ -68,13 +77,14 @@ class _MyAppState extends State<MyApp> {
                         child: makeImagesGrid(),
                       ),
                       Center(
-                        child: Text("Filter"),
+                        // child: Text(user.uid),
+                        child: Text("Filter Feature will be added soon "),
                       ),
                       Center(
-                        child: Text("Saved"),
+                        child: Text("Saved Feature will be added soon "),
                       ),
                       Center(
-                        child: Text("Account"),
+                        child: Text("Account Feature will be added soon "),
                       ),
                     ],
                   ),
@@ -163,12 +173,12 @@ class ImageGridItem extends StatefulWidget {
 
 class _ImageGridItemState extends State<ImageGridItem> {
   Uint8List imageFile;
-  Reference photosReferences = FirebaseStorage.instance.ref().child("images");
+  Reference photosReferences = FirebaseStorage.instance.ref().child("photos");
 
   getImage() {
     int maxsize = 7 * 1024 * 1024;
     photosReferences
-        .child("images_${widget._index}.jpg")
+        .child("image_${widget._index}.jpg")
         .getData(maxsize)
         .then((data) {
       this.setState(() {
@@ -181,9 +191,11 @@ class _ImageGridItemState extends State<ImageGridItem> {
     if (imageFile == null) {
       return Center(child: Text("No Data"));
     } else {
-      return Image.memory(
-        imageFile,
-        fit: BoxFit.cover,
+      return Container(
+        child: Image.memory(
+          imageFile,
+          fit: BoxFit.cover,
+        ),
       );
     }
   }
