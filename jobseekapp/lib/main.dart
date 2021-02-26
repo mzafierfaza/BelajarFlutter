@@ -3,7 +3,7 @@
 import 'dart:typed_data';
 
 import 'package:bloc/bloc.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -12,6 +12,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:jobseekapp/auth_services.dart';
 import 'package:jobseekapp/card_page.dart';
+import 'package:jobseekapp/database_services.dart';
 
 import 'business_logic.dart';
 import 'home_model.dart';
@@ -41,10 +42,17 @@ class _MyAppState extends State<MyApp> {
         itemBuilder: (context, index) {
           return GestureDetector(
               child: ImageGridItem(index + 1),
-              onTap: () {
+              onTap: () async {
+                DocumentSnapshot snapshot =
+                    await DatabaseServices.getLoker((index + 1).toString());
+                Map<String, dynamic> data = snapshot.data();
+                String nama = data['nama_pt'];
+                String posisi = data['posisi'];
+                String lokasi = data['lokasi'];
+                print("Full Name: ${data['nama_pt']} ${data['lokasi']}");
                 Navigator.of(context).push(MaterialPageRoute(
-                    //DIMANA TUJUANNYA ADALAH SECONDAPAGE DAN MENGIRIMKAN DATA YANG DIMINTA
-                    builder: (context) => CardPage()));
+                  builder: (context) => CardPage(index, nama, posisi, lokasi),
+                ));
               });
         });
   }
@@ -54,6 +62,7 @@ class _MyAppState extends State<MyApp> {
     return BlocProvider(
       create: (context) => ThemeCubit(),
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         home: Center(
           child: BlocProvider(
             create: (context) => ChangeHome(
@@ -175,6 +184,8 @@ class _ImageGridItemState extends State<ImageGridItem> {
   Uint8List imageFile;
   Reference photosReferences = FirebaseStorage.instance.ref().child("photos");
 
+  _ImageGridItemState({this.imageFile});
+
   getImage() {
     int maxsize = 7 * 1024 * 1024;
     photosReferences
@@ -192,10 +203,7 @@ class _ImageGridItemState extends State<ImageGridItem> {
       return Center(child: Text("No Data"));
     } else {
       return Container(
-        child: Image.memory(
-          imageFile,
-          fit: BoxFit.cover,
-        ),
+        child: Image.memory(imageFile, fit: BoxFit.cover),
       );
     }
   }
