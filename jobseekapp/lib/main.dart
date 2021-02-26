@@ -12,6 +12,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:jobseekapp/auth_services.dart';
 import 'package:jobseekapp/card_page.dart';
+import 'package:jobseekapp/data_holder.dart';
 import 'package:jobseekapp/database_services.dart';
 
 import 'business_logic.dart';
@@ -187,15 +188,21 @@ class _ImageGridItemState extends State<ImageGridItem> {
   _ImageGridItemState({this.imageFile});
 
   getImage() {
-    int maxsize = 7 * 1024 * 1024;
-    photosReferences
-        .child("image_${widget._index}.jpg")
-        .getData(maxsize)
-        .then((data) {
-      this.setState(() {
-        imageFile = data;
-      });
-    }).catchError((error) {});
+    if (!requestedIndexes.contains(widget._index)) {
+      int maxsize = 7 * 1024 * 1024;
+      photosReferences
+          .child("image_${widget._index}.jpg")
+          .getData(maxsize)
+          .then((data) {
+        this.setState(() {
+          imageFile = data;
+        });
+        imageData.putIfAbsent(widget._index, () {
+          return data;
+        });
+      }).catchError((error) {});
+      requestedIndexes.add(widget._index);
+    }
   }
 
   Widget decideGridTileWidget() {
@@ -211,7 +218,13 @@ class _ImageGridItemState extends State<ImageGridItem> {
   @override
   void initState() {
     super.initState();
-    getImage();
+    if (!imageData.containsKey(widget._index)) {
+      getImage();
+    } else {
+      this.setState(() {
+        imageFile = imageData[widget._index];
+      });
+    }
   }
 
   @override
